@@ -16,9 +16,14 @@ public class App
     	Seller seller = sellerDao.findById(2);
     	System.out.println(seller);
     	
-    	System.out.println("Test ===FindAllByDepartment====");
-    	
+    	System.out.println("Test ===FindAllByDepartment====");    	
     	List<Seller> sellers = sellerDao.findAllByDepartment(new Department(1, "teste"));
+    	for(Seller s : sellers) {
+    		System.out.println(s);
+    	}
+    	
+    	System.out.println("Test ===FindAll====");    	
+    	sellers = sellerDao.findAll();
     	for(Seller s : sellers) {
     		System.out.println(s);
     	}
