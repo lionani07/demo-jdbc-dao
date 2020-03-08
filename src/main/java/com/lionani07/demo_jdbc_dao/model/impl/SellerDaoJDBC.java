@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.lionani07.demo_jdbc_dao.db.DB;
 import com.lionani07.demo_jdbc_dao.db.DBException;
 import com.lionani07.demo_jdbc_dao.model.dao.SellerDao;
 import com.lionani07.demo_jdbc_dao.model.entities.Department;
@@ -59,6 +61,9 @@ public class SellerDaoJDBC implements SellerDao {
 			
 		} catch (SQLException e) {
 			throw new DBException(e.getMessage());
+		}finally {
+			DB.closeResulset(rs);
+			DB.closeStatement(pst);
 		}
 		
 		return null;
@@ -83,6 +88,35 @@ public class SellerDaoJDBC implements SellerDao {
 	public List<Seller> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Seller> findAllByDepartment(Department department) {
+		List<Seller> sellers = new ArrayList<>();
+		sql = "SELECT seller.*, department.Name AS depName FROM seller "
+			  + "INNER JOIN department " 
+			  + "ON seller.DepartmentId = department.Id "
+			  + "WHERE department.Id = ?";
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setInt(1, department.getId());
+			rs = pst.executeQuery();
+			
+			Department dep = null;			
+			while(rs.next()) {
+				if(dep==null) {
+					dep = instantiateDepartment(rs);
+				}
+				sellers.add(instantiateSeller(rs, dep));
+			}
+		} catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		}finally {
+			DB.closeResulset(rs);
+			DB.closeStatement(pst);
+		}
+		return sellers;
+		
 	}
 
 }
